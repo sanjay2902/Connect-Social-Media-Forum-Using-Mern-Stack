@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <style>
+    .item-list {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+  <div>
+    <h2>Add New Item</h2>
+    <form id="addItemForm">
+      <input type="text" id="name" placeholder="Item Name" required>
+      <input type="text" id="description" placeholder="Item Description" required>
+      <button type="submit">Add Item</button>
+    </form>
+  </div>
+
+  <div class="item-list">
+    <h2>Items</h2>
+    <ul id="itemList"></ul>
+  </div>
+
+  <script>
+    // Function to fetch items and display them
+    async function fetchItems() {
+      const response = await fetch('http://localhost:4000/api/items');
+      const items = await response.json();
+      const itemList = document.getElementById('itemList');
+      itemList.innerHTML = '';
+
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} - ${item.description} `;
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = async () => {
+          await fetch(`http://localhost:4000/api/items/${item._id}`, {
+            method: 'DELETE',
+          });
+          fetchItems(); // Refresh the list after deletion
+        };
+        li.appendChild(deleteButton);
+        itemList.appendChild(li);
+      });
+    }
+
+    // Fetch and display items when the page loads
+    window.onload = fetchItems;
+
+    // Handle adding a new item
+    document.getElementById('addItemForm').onsubmit = async (event) => {
+      event.preventDefault();
+      const name = document.getElementById('name').value;
+      const description = document.getElementById('description').value;
+
+      const response = await fetch('http://localhost:4000/api/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, description }),
+      });
+
+      if (response.ok) {
+        fetchItems(); // Refresh the list after adding
+        document.getElementById('addItemForm').reset(); // Reset form fields
+      }
+    };
+  </script>
+</body>
+</html>
