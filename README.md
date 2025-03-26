@@ -50,9 +50,8 @@ Backend Setup
 
 Clone the repository:
 
-git clone https://github.com/yourusername/connect-plus.git
-cd connect-plus/backend
-
+git clone https://github.com/sanjay2902/Connect-Social-Media-Forum-Using-Mern-Stack.git
+cd Connect-Social-Media-Forum-Using-Mern-Stack
 Install dependencies:
 
 npm install
